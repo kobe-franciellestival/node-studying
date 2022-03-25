@@ -1,25 +1,87 @@
 const http = require('http')
-const fs = require('fs')
-const path = require('path')
+const express = require('express')
+const bodyParser = require('body-parser')
 
+const app = express()
 
-http.createServer((req, res) => {
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended: false}))
 
-    const file = req.url === '/' ? 'index.html' : req.url
-    const filePath = path.join(__dirname, 'public', file)
-    const extname = path.extname(filePath)
+const port = normalizePort(process.env.PORT || '5000')
+//seta uma porta pelo process.env - caso nao venha nada ele seta a porta 5000
+app.set('port', port)
 
-    const allowedFileTypes = ['.html', '.css', '.js']
-    const allowed = allowedFileTypes.find(item => item == extname)
+const server = http.createServer(app)
+const router = express.Router()
+//CRUD
 
-    if(!allowed) return
+//read
+const route = router.get('/', (req, res, next) => {
+    res.status(200).send({
+        title: "Node Store API",
+        version: "0.0.1"
+    })
+})
 
-    fs.readFile(
-        filePath,
-        (err, content) => {
-            if(err) throw err
+//C
+const create = router.post('/', (req, res, next) => {
+    res.status(201).send(req.body)
+})
 
-            res.end(content)
-        }
-    )
-}).listen(5000, () => console.log('Server is running'))
+//update
+const put = router.put('/:id', (req, res, next) => {
+    const id = req.params.id
+    res.status(200).send({
+        id: id, 
+        item: req.body
+    })
+})
+
+//delete
+const del = router.delete('/', (req, res, next) => {
+    res.status(200).send(req.body)
+})
+
+app.use('/', route)
+app.use('/products', create)
+app.use('/products', put)
+server.listen(port)
+server.on('error', onError)
+
+console.log("API rodando na porta " + port)
+
+function normalizePort(val) { //funcao do express que verifica porta disponivel pra rodar o servidor
+    const port = parseInt(val, 10)
+
+    if (isNaN(port)) { //verifica se nao eh um num, e retorna 10. 
+        return val
+    }
+    if (port >= 0) { //se for maior ou igual a 0 retorna o num da porta
+        return port;
+    }
+    return false //se cair aqui nao retorna nada.
+}
+
+function onError(error) {
+    if (error.syscall !== 'listen') {
+        throw error
+    }
+
+    const bind = typeof port === 'string' ?
+        'Pipe ' + port :
+        'Port ' + port
+
+    switch (error.code) {
+        case 'EACCES':
+            console.error(bind + ' requires elevated privileges')
+            process.exit(1)
+            break
+
+        case 'EADDRINUSE' :
+            console.error(bind + ' is already in use')
+            process.exit(1)
+            break
+        default:
+            throw error
+    }
+}
