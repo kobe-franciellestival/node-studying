@@ -1,53 +1,14 @@
+const app = require ('./src/app')
 const http = require('http')
-const express = require('express')
-const bodyParser = require('body-parser')
-
-const app = express()
-
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended: false}))
 
 const port = normalizePort(process.env.PORT || '5000')
 //seta uma porta pelo process.env - caso nao venha nada ele seta a porta 5000
 app.set('port', port)
 
 const server = http.createServer(app)
-const router = express.Router()
-//CRUD
 
-//read
-const route = router.get('/', (req, res, next) => {
-    res.status(200).send({
-        title: "Node Store API",
-        version: "0.0.1"
-    })
-})
-
-//C
-const create = router.post('/', (req, res, next) => {
-    res.status(201).send(req.body)
-})
-
-//update
-const put = router.put('/:id', (req, res, next) => {
-    const id = req.params.id
-    res.status(200).send({
-        id: id, 
-        item: req.body
-    })
-})
-
-//delete
-const del = router.delete('/', (req, res, next) => {
-    res.status(200).send(req.body)
-})
-
-app.use('/', route)
-app.use('/products', create)
-app.use('/products', put)
 server.listen(port)
 server.on('error', onError)
-
 console.log("API rodando na porta " + port)
 
 function normalizePort(val) { //funcao do express que verifica porta disponivel pra rodar o servidor
