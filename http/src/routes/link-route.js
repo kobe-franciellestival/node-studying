@@ -1,23 +1,10 @@
-const express = require('express')
-const router = express.Router()
+const express = require('express');
+const router = express.Router();
+const controller = require('../controllers/links-contoller');
 
-//C
-const create = router.post('/', (req, res, next) => {
-    res.status(201).send(req.body)
-})
-
-//update
-const put = router.put('/:id', (req, res, next) => {
-    const id = req.params.id
-    res.status(200).send({
-        id: id, 
-        item: req.body
-    })
-})
-
-//delete
-const del = router.delete('/', (req, res, next) => {
-    res.status(200).send(req.body)
-})
+//Definição das rotas que estão implementadas no controller
+router.post('/', controller.post);
+router.put('/:id', controller.put);
+router.delete('/', controller.delete);
 
 module.exports = router;
