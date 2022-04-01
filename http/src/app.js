@@ -6,7 +6,7 @@ const app = express()
 const router = express.Router()
 
 //conecta ao banco
-mongoose.connect('mongodb+srv://franciellestival-kobe:Kobe2020@crud-nodejs.pmzqo.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+mongoose.connect('credentials')
 
 //carregando model
 const Link = require('./models/link')
