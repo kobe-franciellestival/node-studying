@@ -25,15 +25,37 @@ exports.get = (req, res, next) => {
 
 //update
 exports.put = (req, res, next) => {
-    const id = req.params.id
-    res.status(200).send({
-        id: id,
-        item: req.body
-    })
+    Link.findByIdAndUpdate(req.params.id, {
+        $set: {
+            title: req.body.title,
+            url: req.body.url
+        }
+    }).then(x => {
+        res.status(201).send({
+            message: 'Link atualizado com sucesso!'
+        });
+    }).catch (e => {
+        res.status(400).send({
+            message: 'Falha ao atualizar link',
+            data: e
+        });
+    });
 };
+
 //delete
 exports.delete = (req, res, next) => {
-    res.status(201).send(req.body)
+    Link
+    .findOneAndRemove(req.body.id)
+    .then(x => {
+        res.status(201).send({
+            message: 'Link removido com sucesso!'
+        });
+    }).catch (e => {
+        res.status(400).send({
+            message: 'Falha ao remover link',
+            data: e
+        });
+    });
 };
 
 //read
